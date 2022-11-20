@@ -1,9 +1,9 @@
 import 'dart:math';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_vendor_ecommerce/main_screens/supplier_home_screen.dart';
 import 'package:multi_vendor_ecommerce/widgets/yellow_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+
 
 const textColors = [
   Colors.yellowAccent,
@@ -30,6 +30,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
 
   late AnimationController animationController;
+  bool processing = false;
 
   @override
   void initState() {
@@ -239,10 +240,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                             label: 'Sign Up',
                             width: 0.25,
                             onTap: () {
-                              // Navigator.pushReplacementNamed(
-                              //   context,
-                              //   '/supplier_home_screen',
-                              // );
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/customer_signup_screen',
+                              );
                             },
                           ),
 
@@ -283,17 +284,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                         ),
                       ),
 
-                      GoogleFacebookLogin(
-                        label: 'Guest',
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.person,
-                          size: 55,
-                          color: Colors.lightBlueAccent,
-                        ),
-                      ),
+                      processing == true
+                          ? const CircularProgressIndicator()
+                          : GoogleFacebookLogin(
+                              label: 'Guest',
+                              onTap: () async {
+                                setState(() => processing = true);
 
-
+                                await FirebaseAuth.instance.signInAnonymously();
+                                Navigator.pushReplacementNamed(
+                                    context, '/customer_home_screen');
+                              },
+                              child: const Icon(
+                                Icons.person,
+                                size: 55,
+                                color: Colors.lightBlueAccent,
+                              ),
+                            ),
                     ],
                   ),
                 ),

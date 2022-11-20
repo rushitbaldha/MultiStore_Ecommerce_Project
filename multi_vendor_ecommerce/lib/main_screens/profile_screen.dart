@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_vendor_ecommerce/customer_screens/customer_orders_screen.dart';
 import 'package:multi_vendor_ecommerce/customer_screens/wishlist_screen.dart';
 import 'package:multi_vendor_ecommerce/main_screens/cart_screen.dart';
+import 'package:multi_vendor_ecommerce/widgets/alert_dialog.dart';
 import 'package:multi_vendor_ecommerce/widgets/app_bar_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -253,9 +256,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                    title: 'log Out',
                                    icon: Icons.logout,
                                    onPressed: () {
-                                     Navigator.pushReplacementNamed(
-                                       context,
-                                       '/welcome_screen',
+                                     MyAlertDialog.showMyDialog(
+                                         context: context,
+                                         title: 'Log Out',
+                                       content: 'Are you sure to log out ?',
+                                       tabNo: () {
+                                         Navigator.pop(context);
+                                       },
+                                       tabYes: () async {
+                                         await FirebaseAuth.instance.signOut();
+                                         Navigator.pop(context);
+                                         Navigator.pushReplacementNamed(
+                                           context,
+                                           '/welcome_screen',
+                                         );
+                                       },
                                      );
                                    },
                                  ),
@@ -275,7 +290,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+ /* void _showAlertDialog(BuildContext context) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Log Out'),
+        content: const Text('Are you sure to log out ?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            /// This parameter indicates this action is the default,
+            /// and turns the action's text to bold text.
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            /// This parameter indicates the action would perform
+            /// a destructive action such as deletion, and turns
+            /// the action's text color to red.
+            isDestructiveAction: true,
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(
+                context,
+                '/welcome_screen',
+              );
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }*/
 }
+
+
 
 class ProfileHeaderLabel extends StatelessWidget {
   final String label;
